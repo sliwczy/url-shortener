@@ -1,7 +1,7 @@
 package io.shortcut.service;
 
 import io.shortcut.domain.UrlMapping;
-import io.shortcut.repository.UrlRepository;
+import io.shortcut.repository.UrlMappingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,22 +16,22 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UrlMappingService {
 
-    private final UrlRepository urlRepository;
+    private final UrlMappingRepository urlMappingRepository;
     private final HashingService hashingService;
 
     private String createIfNotExists(String email, String url) {
-        Optional<UrlMapping> urlMapping = urlRepository.getUrlMappingByEmailAndUrl(email, url);
+        Optional<UrlMapping> urlMapping = urlMappingRepository.getUrlMappingByEmailAndUrl(email, url);
         if (urlMapping.isPresent()) {
             log.info("mapping already exists! url: {} hash: {}", url, urlMapping.get().getHashCode());
             return urlMapping.get().getHashCode();
         } else {
             createUrlMapping(email, url);
-            return urlRepository.getUrlMappingByEmailAndUrl(email, url).get().getHashCode();
+            return urlMappingRepository.getUrlMappingByEmailAndUrl(email, url).get().getHashCode();
         }
     }
 
     public String getUrlForAHashMapping(String hashCode) {
-        return urlRepository.getUrlMappingByHashCode(hashCode)
+        return urlMappingRepository.getUrlMappingByHashCode(hashCode)
                 .map(UrlMapping::getUrl)
                 .orElseThrow(() -> new MissingResourceException("No url with given hash found: " + hashCode, UrlMapping.class.getName(), hashCode));
     }
@@ -41,11 +41,11 @@ public class UrlMappingService {
         mapping.setEmail(email);
         mapping.setUrl(url);
         mapping.setHashCode(generateRandomHash());
-        urlRepository.save(mapping);
+        urlMappingRepository.save(mapping);
     }
 
     public Map<String, String> getAllMappingsForUser(String email) {
-        return urlRepository.findAllByEmail(email)
+        return urlMappingRepository.findAllByEmail(email)
                 .stream()
                 .collect(Collectors.toMap(UrlMapping::getUrl, UrlMapping::getHashCode));
     }

@@ -10,7 +10,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-public class UrlEndpoint {
+public class UrlMappingEndpoint {
 
     private final UrlMappingService urlService;
 

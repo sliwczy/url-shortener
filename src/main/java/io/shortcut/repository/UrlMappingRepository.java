@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UrlRepository extends JpaRepository<UrlMapping, String> {
+public interface UrlMappingRepository extends JpaRepository<UrlMapping, String> {
     List<UrlMapping> findAllByEmail(String email);
 
     Optional<UrlMapping> getUrlMappingByEmailAndUrl(String email, String url);
