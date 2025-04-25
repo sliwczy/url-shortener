@@ -34,10 +34,17 @@ Given all above assumptions here is what I propose to use:
 
 ### data design
 
-   main entity has url + user email as a primary key - the reason is that we don't want duplicate url in the db; Also,
-   the same url is tracked per user, because I saw bitly offers some statistics on user traffic on their links; So to enable 
+   main entity has:
+   - id
+   - url 
+   - user email 
+   - hashcode 
+    
+   the reason for this modelling is that we don't want duplicate url in the db; Also, the same url is tracked per user, because I saw bitly offers some statistics on user traffic on their links; So to enable 
    user to track results of their e.g. marketing campaign and not collide with others we keep it "per user";
 
+   sticking with long id as primary key, it has better performance and long urls are not very well suited for indexing, should we need some; instead
+   I'm going to perform a check before adding a potential duplicate url to the database;
    
    
 ### beyond mvp:
