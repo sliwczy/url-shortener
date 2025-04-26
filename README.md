@@ -21,6 +21,8 @@ A service that lets users create short URLs (like Bitly, Rebrandly, etc.) for th
      - assuming users are likely to link local content (like articles in their language), which is also an argument behind locality 
  - there will likely be a lot of users with likely no interactions with each other and not much info stored as well (key-value pairs)
  - the app does not store large amounts of data and is supposed to be MVP, so using in-memory database 
+ - if there is some routing to a most geo-local app, all instances in the region need to have the same db (separate from the app)
+   or have some replication mechanism...
 
 ### tech stack
 
@@ -47,7 +49,8 @@ Given all above assumptions here is what I propose to use:
    I'm going to perform a check before adding a potential duplicate url to the database;
    
    
-### beyond mvp:
-- there is one url endpoint, how do you get redirected to the local instance ?
+### ideas beyond mvp:
+- there could be multiple regional instances of the app; figure out, if there is one url endpoint, how to redirect to most geo-local instance ?
 - how does db persistance looks like when vm is killed ? persistance in docker/kubernetes ?
-
+- could have a scheduled service scanning urls in the database for existing malicious url to disalow redirects there;
+  also this check could happen when trying to add a url, but above case describes when at a later time the site is proven malicious; 
