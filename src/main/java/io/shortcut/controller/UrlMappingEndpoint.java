@@ -2,6 +2,7 @@ package io.shortcut.controller;
 
 import io.shortcut.domain.UrlMapping;
 import io.shortcut.service.UrlMappingService;
+import io.shortcut.service.ValidationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
