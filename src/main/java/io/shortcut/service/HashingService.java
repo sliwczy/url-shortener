@@ -15,7 +15,7 @@ public class HashingService {
         this.hashids = new Hashids(SALT, 7);
     }
 
-    public String getUuid() {
+    public String getShortenedUrlHash() {
         return hashids.encode(System.nanoTime());
     }
 }

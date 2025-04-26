@@ -19,38 +19,39 @@ public class UrlMappingService {
     private final UrlMappingRepository urlMappingRepository;
     private final HashingService hashingService;
 
-    private String createIfNotExists(String email, String url) {
-        Optional<UrlMapping> urlMapping = urlMappingRepository.getUrlMappingByEmailAndUrl(email, url);
+    public String createIfNotExists(String email, String url) {
+        Optional<UrlMapping> urlMapping = urlMappingRepository.getUrlMappingByUserEmailAndUrl(email, url);
         if (urlMapping.isPresent()) {
-            log.info("mapping already exists! url: {} hash: {}", url, urlMapping.get().getHashCode());
-            return urlMapping.get().getHashCode();
+            log.info("mapping already exists! url: {} hash: {}", url, urlMapping.get().getShortenedUrl());
+            return urlMapping.get().getShortenedUrl();
         } else {
             createUrlMapping(email, url);
-            return urlMappingRepository.getUrlMappingByEmailAndUrl(email, url).get().getHashCode();
+            return urlMappingRepository.getUrlMappingByUserEmailAndUrl(email, url).get().getShortenedUrl();
         }
     }
 
     public String getUrlForAHashMapping(String hashCode) {
-        return urlMappingRepository.getUrlMappingByHashCode(hashCode)
+        return urlMappingRepository.getUrlMappingByShortenedUrl(hashCode)
                 .map(UrlMapping::getUrl)
                 .orElseThrow(() -> new MissingResourceException("No url with given hash found: " + hashCode, UrlMapping.class.getName(), hashCode));
     }
 
+    public Optional<UrlMapping> getUrlMappingByUuid(String uuid) {
+        return urlMappingRepository.getUrlMappingByUuid(uuid);
+//                .orElseThrow(() -> new MissingResourceException("No mapping found for uuid: " + uuid, UrlMapping.class.getName(), uuid));
+    }
+
     private void createUrlMapping(String email, String url) {
         var mapping = new UrlMapping();
-        mapping.setEmail(email);
+        mapping.setUserEmail(email);
         mapping.setUrl(url);
-        mapping.setHashCode(generateRandomHash());
+        mapping.setShortenedUrl(hashingService.getShortenedUrlHash());
         urlMappingRepository.save(mapping);
     }
 
     public Map<String, String> getAllMappingsForUser(String email) {
-        return urlMappingRepository.findAllByEmail(email)
+        return urlMappingRepository.findAllByUserEmail(email)
                 .stream()
-                .collect(Collectors.toMap(UrlMapping::getUrl, UrlMapping::getHashCode));
-    }
-
-    private String generateRandomHash() {
-        return hashingService.getUuid();
+                .collect(Collectors.toMap(UrlMapping::getUrl, UrlMapping::getShortenedUrl));
     }
 }

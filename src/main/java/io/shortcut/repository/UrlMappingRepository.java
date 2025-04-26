@@ -9,9 +9,11 @@ import java.util.Optional;
 
 @Repository
 public interface UrlMappingRepository extends JpaRepository<UrlMapping, String> {
-    List<UrlMapping> findAllByEmail(String email);
+    List<UrlMapping> findAllByUserEmail(String email);
 
-    Optional<UrlMapping> getUrlMappingByEmailAndUrl(String email, String url);
+    Optional<UrlMapping> getUrlMappingByUuid(String uuid);
 
-    Optional<UrlMapping> getUrlMappingByHashCode(String hashCode);
+    Optional<UrlMapping> getUrlMappingByUserEmailAndUrl(String email, String url);
+
+    Optional<UrlMapping> getUrlMappingByShortenedUrl(String hashCode);
 }
