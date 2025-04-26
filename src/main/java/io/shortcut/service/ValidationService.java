@@ -8,11 +8,11 @@ import java.util.regex.Pattern;
 @Service
 public class ValidationService {
 
-    public static final Pattern URL_MATCHER = Pattern.compile("/^https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)$/");
+    public static final Pattern URL_MATCHER = Pattern.compile("^https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)$");
 
     public void validateUrl(String url) {
         if (!URL_MATCHER.matcher(url).matches()) {
-           throw new InvalidUrlException("url is malformed");
+           throw new InvalidUrlException("url is malformed " + url);
         }
     }
     //todo no need to sanitize input because it's done out of the box by Spring

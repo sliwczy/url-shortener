@@ -19,9 +19,9 @@ public class UrlMappingEndpoint {
     private final ValidationService validationService;
 
     //todo not following REST API pattern purposely - to have shortest url possible
-    @GetMapping
-    public ResponseEntity<String> HttpRequest(String urlHash) {
-        String redirectUrl = urlService.getUrlForAHashMapping(urlHash);
+    @GetMapping("/{urlHash}")
+    public ResponseEntity<String> redirect(@PathVariable String urlHash) {
+        var redirectUrl = urlService.getUrlForAHashMapping(urlHash);
 
         return ResponseEntity
                 .status(HttpStatus.FOUND)
