@@ -15,6 +15,7 @@ import java.util.Optional;
 public class UrlMappingEndpoint {
 
     private final UrlMappingService urlService;
+    private final ValidationService validationService;
 
     //todo not following REST API pattern purposely - to have shortest url possible
     @GetMapping
@@ -40,6 +41,7 @@ public class UrlMappingEndpoint {
 
     @PutMapping("/mappings")
     public ResponseEntity<String> createUrl(@RequestBody UrlMapping urlMapping) {
+        validationService.validateUrl(urlMapping.getUrl());
         String hash = urlService.createIfNotExists(urlMapping.getUserEmail(), urlMapping.getUrl());
         return ResponseEntity.of(Optional.of(hash));
     }
