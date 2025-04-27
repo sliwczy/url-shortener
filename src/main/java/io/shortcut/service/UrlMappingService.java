@@ -1,15 +1,15 @@
 package io.shortcut.service;
 
 import io.shortcut.domain.UrlMapping;
+import io.shortcut.dto.UrlMappingResponseDTO;
 import io.shortcut.repository.UrlMappingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
+import java.util.List;
 import java.util.MissingResourceException;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -49,9 +49,16 @@ public class UrlMappingService {
         urlMappingRepository.save(mapping);
     }
 
-    public Map<String, String> getAllMappingsForUser(String email) {
+    public List<UrlMappingResponseDTO> getAllMappingsForUser(String email) {
         return urlMappingRepository.findAllByUserEmail(email)
                 .stream()
-                .collect(Collectors.toMap(UrlMapping::getUrl, UrlMapping::getShortenedUrl));
+                .map(entity -> UrlMappingResponseDTO.builder()
+                        .uuid(entity.getUuid())
+                        .url(entity.getUrl())
+                        .shortenedUrl(entity.getShortenedUrl())
+                        .createdBy(entity.getUserEmail())
+                        .build()
+                )
+                .toList();
     }
 }
