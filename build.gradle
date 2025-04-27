@@ -29,7 +29,7 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
-    //todo later add citrus
+    testImplementation 'io.rest-assured:rest-assured:5.5.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
