@@ -6,6 +6,7 @@ import io.shortcut.service.ValidationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -13,34 +14,25 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("mappings")
 public class UrlMappingEndpoint {
 
     private final UrlMappingService urlService;
     private final ValidationService validationService;
 
-    //todo not following REST API pattern purposely - to have shortest url possible
-    @GetMapping("/{urlHash}")
-    public ResponseEntity<String> redirect(@PathVariable String urlHash) {
-        var redirectUrl = urlService.getUrlForAHashMapping(urlHash);
 
-        return ResponseEntity
-                .status(HttpStatus.FOUND)
-                .header("Location", redirectUrl)
-                .build();
-    }
-
-    @GetMapping("/mappings/{uuid}")
+    @GetMapping("/{uuid}")
     public ResponseEntity<UrlMapping> getUrlMapping(@PathVariable String uuid) {
         return ResponseEntity.of(urlService.getUrlMappingByUuid(uuid));
     }
 
-    @GetMapping("/mappings")
+    @GetMapping
     public Map<String, String> getUrlMappings() {
-        //todo: get email from a security context
-        return urlService.getAllMappingsForUser("email");
+        String email = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        return urlService.getAllMappingsForUser(email);
     }
 
-    @PutMapping("/mappings")
+    @PutMapping
     public ResponseEntity<String> createUrl(@RequestBody UrlMapping urlMapping) {
         validationService.validateUrl(urlMapping.getUrl());
         String hash = urlService.createIfNotExists(urlMapping.getUserEmail(), urlMapping.getUrl());
