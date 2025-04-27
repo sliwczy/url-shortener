@@ -23,20 +23,23 @@ public class UserAccountEndpoint {
     private final UserAccountRepository userAccountRepository;
 
     @PostMapping("/auth")
-    public String createAuthenticationToken(@RequestBody UserAccountDTO userAccountDTO) throws Exception {
+    public ResponseEntity<String> createAuthenticationToken(@RequestBody UserAccountDTO userAccountDTO) throws Exception {
 
         UserAccount userAccount = userAccountRepository.getUserByEmail(userAccountDTO.getEmail());
         //todo: passwords in db should be encrypted and salted but not doing it because this is MVP POC/MVP
-        if (userAccount.getPassword().equals(userAccountDTO.getPassword())) {
-            return jwtService.generateToken(userAccountDTO.getEmail());
+        if (userAccount != null && userAccount.getPassword().equals(userAccountDTO.getPassword())) {
+            return ResponseEntity.ok(jwtService.generateToken(userAccountDTO.getEmail()));
         } else {
-            //or return response entity ?
-            throw new Exception("Invalid credentials");
+            return ResponseEntity.status(401).body("Invalid credentials");
         }
     }
 
     @PostMapping("/register")
     public ResponseEntity<String> createNewUser(@RequestBody UserAccountDTO userAccountDTO) {
+        if (userAccountRepository.getUserByEmail(userAccountDTO.getEmail()) != null) {
+           return ResponseEntity.status(409).body("User already registered");
+        }
+
         UserAccount userAccount = new UserAccount();
         userAccount.setEmail(userAccountDTO.getEmail());
         userAccount.setPassword(userAccountDTO.getPassword());//todo: encrypt before saving ! implement it later
