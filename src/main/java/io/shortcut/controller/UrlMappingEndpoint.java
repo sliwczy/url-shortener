@@ -38,6 +38,7 @@ public class UrlMappingEndpoint {
         validationService.validateUrl(urlMapping.getUrl());
         String email = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
         String hash = urlService.createIfNotExists(email, urlMapping.getUrl());
-        return ResponseEntity.of(Optional.of(hash));
+        //todo implement return 201 if created and 200 if existing
+        return ResponseEntity.status(200).body(hash);
     }
 }
