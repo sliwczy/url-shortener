@@ -14,6 +14,7 @@ public class JwtService {
     private final long VALID_IN_MS = 3600000; // 1 hour
     private final KeyUtil keyUtil;
 
+    //todo: on top of signing the token could also be encrypted to increase security
     public String generateToken(String username) {
         return Jwts.builder()
                 .subject(username)
